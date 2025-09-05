@@ -1,0 +1,2370 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Supermercado",
+    "description": "Uma API abrangente para gerenciar um sistema de supermercado, incluindo clientes, produtos, pedidos, funcionários e mais.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:1243"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação e Cadastro",
+      "description": "Rotas para login e cadastro de usuários"
+    },
+    {
+      "name": "Clientes",
+      "description": "Gerenciamento de clientes"
+    },
+    {
+      "name": "Produtos",
+      "description": "Gerenciamento de produtos do supermercado"
+    },
+    {
+      "name": "Pedidos",
+      "description": "Gerenciamento de pedidos"
+    },
+    {
+      "name": "Itens do Pedido",
+      "description": "Gerenciamento de itens dentro de um pedido"
+    },
+    {
+      "name": "Pagamentos",
+      "description": "Gerenciamento de pagamentos"
+    },
+    {
+      "name": "Avaliações",
+      "description": "Gerenciamento de avaliações de produtos"
+    },
+    {
+      "name": "Empresas",
+      "description": "Gerenciamento de empresas (supermercados)"
+    },
+    {
+      "name": "Funcionários",
+      "description": "Gerenciamento de funcionários e suas funções"
+    },
+    {
+      "name": "Tipo de Emprego",
+      "description": "Gerenciamento de cargos e funções de emprego"
+    },
+    {
+      "name": "Endereços",
+      "description": "Gerenciamento de endereços de clientes e empresas"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["Autenticação e Cadastro"],
+        "summary": "Login de cliente",
+        "description": "Autentica um cliente com email e senha e retorna um token de acesso.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "senha"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "default":"carla.oliveira@email.com"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "format": "password",
+                    "default":"senha-cliente-123"
+                  },
+                  "validade": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login bem-sucedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "usuario": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login-admin": {
+      "post": {
+        "tags": ["Autenticação e Cadastro"],
+        "summary": "Login de administrador",
+        "description": "Autentica um funcionário com email e senha (com cargo de ADMIN) e retorna um token de acesso.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "senha"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "validade": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login bem-sucedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "usuario": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cadastro/cliente": {
+      "post": {
+        "tags": ["Autenticação e Cadastro"],
+        "summary": "Cadastra um novo cliente",
+        "description": "Cria um novo cliente na base de dados.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome", "email", "cpf", "telefone", "senha"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "cpf": {
+                    "type": "string"
+                  },
+                  "telefone": {
+                    "type": "string"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "cpf": {
+                      "type": "string"
+                    },
+                    "telefone": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito: email ou CPF já cadastrado."
+          }
+        }
+      }
+    },
+    "/clientes": {
+      "get": {
+        "tags": ["Clientes"],
+        "summary": "Obtém todos os clientes",
+        "description": "Recupera uma lista de todos os clientes.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de clientes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "cpf": {
+                        "type": "string"
+                      },
+                      "telefone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/{id}": {
+      "get": {
+        "tags": ["Clientes"],
+        "summary": "Obtém um cliente por ID",
+        "description": "Recupera os detalhes de um cliente específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do cliente a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do cliente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "cpf": {
+                      "type": "string"
+                    },
+                    "telefone": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Clientes"],
+        "summary": "Atualiza um cliente por ID",
+        "description": "Atualiza os dados de um cliente específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do cliente a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cpf": {
+                    "type": "string"
+                  },
+                  "telefone": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Cliente atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Clientes"],
+        "summary": "Remove um cliente por ID",
+        "description": "Remove um cliente da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do cliente a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cliente removido com sucesso."
+          }
+        }
+      }
+    },
+    "/empresas": {
+      "post": {
+        "tags": ["Empresas"],
+        "summary": "Cria uma nova empresa",
+        "description": "Cria um novo registro de empresa (supermercado) na base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome", "cnpj", "email"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cnpj": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Empresa criada com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Empresas"],
+        "summary": "Obtém todas as empresas",
+        "description": "Recupera uma lista de todas as empresas cadastradas.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de empresas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "cnpj": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/empresas/{id}": {
+      "get": {
+        "tags": ["Empresas"],
+        "summary": "Obtém uma empresa por ID",
+        "description": "Recupera os detalhes de uma empresa específica pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da empresa a ser recuperada.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes da empresa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "cnpj": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Empresas"],
+        "summary": "Atualiza uma empresa por ID",
+        "description": "Atualiza os dados de uma empresa específica.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da empresa a ser atualizada.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cnpj": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Empresa atualizada com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Empresas"],
+        "summary": "Remove uma empresa por ID",
+        "description": "Remove uma empresa da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da empresa a ser removida.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Empresa removida com sucesso."
+          }
+        }
+      }
+    },
+    "/produtos": {
+      "post": {
+        "tags": ["Produtos"],
+        "summary": "Cria um novo produto",
+        "description": "Cria um novo produto na base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome", "preco", "quantidade", "descricao", "id_supermercado"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "preco": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "quantidade": {
+                    "type": "integer"
+                  },
+                  "descricao": {
+                    "type": "string"
+                  },
+                  "id_supermercado": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Produtos"],
+        "summary": "Obtém todos os produtos",
+        "description": "Recupera uma lista de todos os produtos.",
+        "responses": {
+          "200": {
+            "description": "Lista de produtos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "preco": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "quantidade": {
+                        "type": "integer"
+                      },
+                      "descricao": {
+                        "type": "string"
+                      },
+                      "id_supermercado": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produtos/{id}": {
+      "get": {
+        "tags": ["Produtos"],
+        "summary": "Obtém um produto por ID",
+        "description": "Recupera os detalhes de um produto específico pelo seu ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do produto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "preco": {
+                      "type": "number",
+                      "format": "float"
+                    },
+                    "quantidade": {
+                      "type": "integer"
+                    },
+                    "descricao": {
+                      "type": "string"
+                    },
+                    "id_supermercado": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Produtos"],
+        "summary": "Atualiza um produto por ID",
+        "description": "Atualiza os dados de um produto específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "preco": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "quantidade": {
+                    "type": "integer"
+                  },
+                  "descricao": {
+                    "type": "string"
+                  },
+                  "id_supermercado": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Produto atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Produtos"],
+        "summary": "Remove um produto por ID",
+        "description": "Remove um produto da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Produto removido com sucesso."
+          }
+        }
+      }
+    },
+    "/pedidos": {
+      "post": {
+        "tags": ["Pedidos"],
+        "summary": "Cria um novo pedido",
+        "description": "Cria um novo pedido na base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_cliente", "valor"],
+                "properties": {
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "valor": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Pedidos"],
+        "summary": "Obtém todos os pedidos",
+        "description": "Recupera uma lista de todos os pedidos. Clientes só podem ver seus próprios pedidos.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pedidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "id_cliente": {
+                        "type": "integer"
+                      },
+                      "data_pedido": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "valor": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}": {
+      "get": {
+        "tags": ["Pedidos"],
+        "summary": "Obtém um pedido por ID",
+        "description": "Recupera os detalhes de um pedido específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do pedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "id_cliente": {
+                      "type": "integer"
+                    },
+                    "data_pedido": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "valor": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pedidos"],
+        "summary": "Atualiza um pedido por ID",
+        "description": "Atualiza os dados de um pedido específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "valor": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Pedido atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pedidos"],
+        "summary": "Remove um pedido por ID",
+        "description": "Remove um pedido da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pedido removido com sucesso."
+          }
+        }
+      }
+    },
+    "/itenspedidos": {
+      "post": {
+        "tags": ["Itens do Pedido"],
+        "summary": "Adiciona um item a um pedido",
+        "description": "Adiciona um novo item (produto com quantidade) a um pedido existente.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_pedido", "id_produto", "quantidade"],
+                "properties": {
+                  "id_pedido": {
+                    "type": "integer"
+                  },
+                  "id_produto": {
+                    "type": "integer"
+                  },
+                  "quantidade": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item do pedido criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Itens do Pedido"],
+        "summary": "Obtém todos os itens de pedidos",
+        "description": "Recupera uma lista de todos os itens de pedidos.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de itens de pedidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "id_pedido": {
+                        "type": "integer"
+                      },
+                      "id_produto": {
+                        "type": "integer"
+                      },
+                      "quantidade": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/itenspedido/{id}": {
+      "get": {
+        "tags": ["Itens do Pedido"],
+        "summary": "Obtém um item de pedido por ID",
+        "description": "Recupera os detalhes de um item de pedido específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do item de pedido a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do item do pedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "id_pedido": {
+                      "type": "integer"
+                    },
+                    "id_produto": {
+                      "type": "integer"
+                    },
+                    "quantidade": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Itens do Pedido"],
+        "summary": "Atualiza um item de pedido por ID",
+        "description": "Atualiza os dados de um item de pedido específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do item de pedido a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_pedido": {
+                    "type": "integer"
+                  },
+                  "id_produto": {
+                    "type": "integer"
+                  },
+                  "quantidade": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Item do pedido atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Itens do Pedido"],
+        "summary": "Remove um item de pedido por ID",
+        "description": "Remove um item de pedido da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do item de pedido a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Item do pedido removido com sucesso."
+          }
+        }
+      }
+    },
+    "/pagamentos": {
+      "post": {
+        "tags": ["Pagamentos"],
+        "summary": "Registra um novo pagamento",
+        "description": "Registra um novo pagamento para um pedido.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_pedido", "tipo"],
+                "properties": {
+                  "id_pedido": {
+                    "type": "integer"
+                  },
+                  "tipo": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pagamento registrado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Pagamentos"],
+        "summary": "Obtém todos os pagamentos",
+        "description": "Recupera uma lista de todos os pagamentos.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pagamentos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "id_pedido": {
+                        "type": "integer"
+                      },
+                      "tipo": {
+                        "type": "string"
+                      },
+                      "data_pagamento": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pagamentos/{id}": {
+      "get": {
+        "tags": ["Pagamentos"],
+        "summary": "Obtém um pagamento por ID",
+        "description": "Recupera os detalhes de um pagamento específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pagamento a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do pagamento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "id_pedido": {
+                      "type": "integer"
+                    },
+                    "tipo": {
+                      "type": "string"
+                    },
+                    "data_pagamento": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pagamentos"],
+        "summary": "Atualiza um pagamento por ID",
+        "description": "Atualiza os dados de um pagamento específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pagamento a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_pedido": {
+                    "type": "integer"
+                  },
+                  "tipo": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Pagamento atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pagamentos"],
+        "summary": "Remove um pagamento por ID",
+        "description": "Remove um pagamento da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pagamento a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pagamento removido com sucesso."
+          }
+        }
+      }
+    },
+    "/avaliacoes": {
+      "post": {
+        "tags": ["Avaliações"],
+        "summary": "Cria uma nova avaliação",
+        "description": "Adiciona uma nova avaliação para um produto.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_cliente", "id_produto", "nota", "comentario"],
+                "properties": {
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "id_produto": {
+                    "type": "integer"
+                  },
+                  "nota": {
+                    "type": "integer"
+                  },
+                  "comentario": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Avaliação criada com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Avaliações"],
+        "summary": "Obtém todas as avaliações",
+        "description": "Recupera uma lista de todas as avaliações de produtos.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de avaliações.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "id_cliente": {
+                        "type": "integer"
+                      },
+                      "id_produto": {
+                        "type": "integer"
+                      },
+                      "nota": {
+                        "type": "integer"
+                      },
+                      "comentario": {
+                        "type": "string"
+                      },
+                      "data_avaliacao": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avaliacoes/{id}": {
+      "get": {
+        "tags": ["Avaliações"],
+        "summary": "Obtém uma avaliação por ID",
+        "description": "Recupera os detalhes de uma avaliação específica pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da avaliação a ser recuperada.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes da avaliação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "id_cliente": {
+                      "type": "integer"
+                    },
+                    "id_produto": {
+                      "type": "integer"
+                    },
+                    "nota": {
+                      "type": "integer"
+                    },
+                    "comentario": {
+                      "type": "string"
+                    },
+                    "data_avaliacao": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Avaliações"],
+        "summary": "Atualiza uma avaliação por ID",
+        "description": "Atualiza os dados de uma avaliação específica.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da avaliação a ser atualizada.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "id_produto": {
+                    "type": "integer"
+                  },
+                  "nota": {
+                    "type": "integer"
+                  },
+                  "comentario": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Avaliação atualizada com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Avaliações"],
+        "summary": "Remove uma avaliação por ID",
+        "description": "Remove uma avaliação da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da avaliação a ser removida.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Avaliação removida com sucesso."
+          }
+        }
+      }
+    },
+    "/funcionarios": {
+      "post": {
+        "tags": ["Funcionários"],
+        "summary": "Cria um novo funcionário",
+        "description": "Cria um novo funcionário na base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome", "cpf", "email", "senha", "id_empresa", "id_tipo_empregado"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cpf": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "id_empresa": {
+                    "type": "integer"
+                  },
+                  "id_tipo_empregado": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Funcionário criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Funcionários"],
+        "summary": "Obtém todos os funcionários",
+        "description": "Recupera uma lista de todos os funcionários.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de funcionários.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "cpf": {
+                        "type": "string"
+                      },
+                      "telefone": {
+                        "type": "string"
+                      },
+                      "id_empresa": {
+                        "type": "integer"
+                      },
+                      "id_tipo_empregado": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/funcionarios/{id}": {
+      "get": {
+        "tags": ["Funcionários"],
+        "summary": "Obtém um funcionário por ID",
+        "description": "Recupera os detalhes de um funcionário específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do funcionário a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do funcionário.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "cpf": {
+                      "type": "string"
+                    },
+                    "telefone": {
+                      "type": "string"
+                    },
+                    "id_empresa": {
+                      "type": "integer"
+                    },
+                    "id_tipo_empregado": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Funcionários"],
+        "summary": "Atualiza um funcionário por ID",
+        "description": "Atualiza os dados de um funcionário específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do funcionário a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cpf": {
+                    "type": "string"
+                  },
+                  "telefone": {
+                    "type": "string"
+                  },
+                  "id_empresa": {
+                    "type": "integer"
+                  },
+                  "id_tipo_empregado": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Funcionário atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Funcionários"],
+        "summary": "Remove um funcionário por ID",
+        "description": "Remove um funcionário da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do funcionário a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Funcionário removido com sucesso."
+          }
+        }
+      }
+    },
+    "/tipoempregos": {
+      "post": {
+        "tags": ["Tipo de Emprego"],
+        "summary": "Cria um novo tipo de emprego",
+        "description": "Cria um novo cargo ou função de emprego na base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome", "salario", "carga_horario", "descricao"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "salario": {
+                    "type": "number"
+                  },
+                  "carga_horario": {
+                    "type": "integer"
+                  },
+                  "descricao": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tipo de emprego criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Tipo de Emprego"],
+        "summary": "Obtém todos os tipos de emprego",
+        "description": "Recupera uma lista de todos os tipos de emprego cadastrados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tipos de emprego.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "salario": {
+                        "type": "number"
+                      },
+                      "carga_horario": {
+                        "type": "integer"
+                      },
+                      "descricao": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tipoempregos/{id}": {
+      "get": {
+        "tags": ["Tipo de Emprego"],
+        "summary": "Obtém um tipo de emprego por ID",
+        "description": "Recupera os detalhes de um tipo de emprego específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do tipo de emprego a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do tipo de emprego.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "salario": {
+                      "type": "number"
+                    },
+                    "carga_horario": {
+                      "type": "integer"
+                    },
+                    "descricao": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tipo de Emprego"],
+        "summary": "Atualiza um tipo de emprego por ID",
+        "description": "Atualiza os dados de um tipo de emprego específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do tipo de emprego a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "salario": {
+                    "type": "number"
+                  },
+                  "carga_horario": {
+                    "type": "integer"
+                  },
+                  "descricao": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Tipo de emprego atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tipo de Emprego"],
+        "summary": "Remove um tipo de emprego por ID",
+        "description": "Remove um tipo de emprego da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do tipo de emprego a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Tipo de emprego removido com sucesso."
+          }
+        }
+      }
+    },
+    "/enderecos": {
+      "post": {
+        "tags": ["Endereços"],
+        "summary": "Cria um novo endereço",
+        "description": "Cria um novo registro de endereço para um cliente, empresa ou funcionário.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["cep", "logradouro", "numero", "bairro"],
+                "properties": {
+                  "cep": {
+                    "type": "string"
+                  },
+                  "logradouro": {
+                    "type": "string"
+                  },
+                  "numero": {
+                    "type": "integer"
+                  },
+                  "complemento": {
+                    "type": "string"
+                  },
+                  "bairro": {
+                    "type": "string"
+                  },
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "id_empresa": {
+                    "type": "integer"
+                  },
+                  "id_funcionario": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Endereço criado com sucesso."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Endereços"],
+        "summary": "Obtém todos os endereços",
+        "description": "Recupera uma lista de todos os endereços.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de endereços.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "cep": {
+                        "type": "string"
+                      },
+                      "logradouro": {
+                        "type": "string"
+                      },
+                      "numero": {
+                        "type": "integer"
+                      },
+                      "complemento": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "id_cliente": {
+                        "type": "integer"
+                      },
+                      "id_empresa": {
+                        "type": "integer"
+                      },
+                      "id_funcionario": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enderecos/{id}": {
+      "get": {
+        "tags": ["Endereços"],
+        "summary": "Obtém um endereço por ID",
+        "description": "Recupera os detalhes de um endereço específico pelo seu ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do endereço a ser recuperado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do endereço.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "cep": {
+                      "type": "string"
+                    },
+                    "logradouro": {
+                      "type": "string"
+                    },
+                    "numero": {
+                      "type": "integer"
+                    },
+                    "complemento": {
+                      "type": "string"
+                    },
+                    "bairro": {
+                      "type": "string"
+                    },
+                    "id_cliente": {
+                      "type": "integer"
+                    },
+                    "id_empresa": {
+                      "type": "integer"
+                    },
+                    "id_funcionario": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Endereços"],
+        "summary": "Atualiza um endereço por ID",
+        "description": "Atualiza os dados de um endereço específico.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do endereço a ser atualizado.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cep": {
+                    "type": "string"
+                  },
+                  "logradouro": {
+                    "type": "string"
+                  },
+                  "numero": {
+                    "type": "integer"
+                  },
+                  "complemento": {
+                    "type": "string"
+                  },
+                  "bairro": {
+                    "type": "string"
+                  },
+                  "id_cliente": {
+                    "type": "integer"
+                  },
+                  "id_empresa": {
+                    "type": "integer"
+                  },
+                  "id_funcionario": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Endereço atualizado com sucesso."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Endereços"],
+        "summary": "Remove um endereço por ID",
+        "description": "Remove um endereço da base de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do endereço a ser removido.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Endereço removido com sucesso."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
