@@ -5,6 +5,17 @@ const genericController = require('./controllers/genericController');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
+routes.get('/', (req, res) => {
+    res.json({
+        rotas: [
+            {
+                metodo: "POST",
+                rota: "/login"
+            }
+        ]
+    })
+})
 // Controllers Customizados
 const login = require('./controllers/login');
 const cadastro = require('./controllers/cadastro');
