@@ -1,11 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
-const { createHash } = require('../src/middlewares/auth'); 
+const { createHash } = require('../src/middlewares/auth');
 const prisma = new PrismaClient();
 
 async function main() {
     console.log(`Iniciando o processo de seed...`);
 
-    // 1. Criar um Tipo de Emprego "Administrador"
     const tipoAdmin = await prisma.tipoEmprego.create({
         data: {
             nome: 'Administrador',
@@ -14,9 +13,7 @@ async function main() {
             descricao: 'Gerencia o sistema e as operações.'
         },
     });
-    console.log(`Criado tipo de emprego: ${tipoAdmin.nome}`);
 
-    // 2. Criar a Empresa/Supermercado "Matriz"
     const empresaMatriz = await prisma.empresa.create({
         data: {
             nome: 'Speed Market Matriz',
@@ -24,11 +21,9 @@ async function main() {
             email: 'matriz@speedmarket.com',
         },
     });
-    console.log(`Criada empresa: ${empresaMatriz.nome}`);
 
-    // 3. Criar o primeiro Funcionário (Admin)
-    const adminPassword = await createHash('admin123'); 
-    const primeiroAdmin = await prisma.funcionario.create({
+    const adminPassword = await createHash('admin123');
+    const primeiroAdmin = await prisma.usuario.create({
         data: {
             nome: 'Admin Principal',
             cpf: '00000000000',
@@ -40,7 +35,20 @@ async function main() {
             id_tipo_empregado: tipoAdmin.id,
         },
     });
-    console.log(`Criado admin: ${primeiroAdmin.nome} (email: ${primeiroAdmin.email})`);
+    console.log(`Criado admin: ${primeiroAdmin.nome}`);
+    
+    const clientePassword = await createHash('cliente123');
+    const primeiroCliente = await prisma.usuario.create({
+        data: {
+            nome: 'Cliente Exemplo',
+            cpf: '11111111111',
+            telefone: '19888888888',
+            email: 'cliente@exemplo.com',
+            senha: clientePassword,
+            role: 'CLIENTE',
+        },
+    });
+    console.log(`Criado cliente: ${primeiroCliente.nome}`);
 
     console.log(`Seed finalizado com sucesso.`);
 }

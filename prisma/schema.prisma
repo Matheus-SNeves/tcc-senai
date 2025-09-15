@@ -3,131 +3,140 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
+// Modelos que não mudam
 model Empresa {
-  id         Int           @id @default(autoincrement())
-  nome       String        @db.VarChar(255)
-  cnpj        String   @unique @db.VarChar(18)
-  email      String        @db.VarChar(255) @unique
-  produtos   Produto[]
-  empregados Funcionario[]
-  enderecos  Endereco[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id        Int        @id @default(autoincrement())
+  nome      String     @db.VarChar(255)
+  cnpj      String     @unique @db.VarChar(18)
+  email     String     @db.VarChar(255) @unique
+  produtos  Produto[]
+  usuarios  Usuario[] // MUDOU DE 'empregados' para 'usuarios'
+  enderecos Endereco[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
+model TipoEmprego {
+  id            Int       @id @default(autoincrement())
+  nome          String    @db.VarChar(255)
+  salario       Float
+  carga_horaria Int
+  descricao     String    @db.VarChar(255)
+  usuarios      Usuario[] // MUDOU DE 'empregados' para 'usuarios'
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Enums (sem alteração)
 enum UserRole {
   CLIENTE
   ADMIN
 }
 
 enum tiposProd {
-  acougue
-  bebidas
+  acougue 
+  bebidas 
   frios
   higiene
   hortifruti
-  laticinios
-  limpeza
+  laticinios 
+  limpeza 
   padaria
-}
-
-model Produto {
-  id             Int           @id @default(autoincrement())
-  nome           String        @db.VarChar(255)
-  preco          Float
-  quantidade     Int
-  descricao      String        @db.VarChar(255)
-  id_supermercado Int
-  supermercado   Empresa       @relation(fields: [id_supermercado], references: [id])
-  pedidos        ItensPedido[]
-  avaliacoes     Avaliacao[]
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-}
-
-model TipoEmprego {
-  id            Int           @id @default(autoincrement())
-  nome          String        @db.VarChar(255)
-  salario       Float
-  carga_horaria Int
-  descricao     String        @db.VarChar(255)
-  role          tiposProd
-  empregados    Funcionario[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-}
-
-model Funcionario {
-  id                Int         @id @default(autoincrement())
-  nome              String      @db.VarChar(255)
-  cpf               String      @db.VarChar(11)
-  telefone          String      @db.VarChar(15)
-  email             String      @db.VarChar(255) @unique 
-  senha             String      
-  role              UserRole    @default(ADMIN) 
-  id_empresa        Int
-  id_tipo_empregado Int
-  empresa           Empresa     @relation(fields: [id_empresa], references: [id])
-  tipo_empregado    TipoEmprego @relation(fields: [id_tipo_empregado], references: [id])
-  enderecos         Endereco[]
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-}
-
-model Cliente {
-  id         Int         @id @default(autoincrement())
-  nome       String      @db.VarChar(255)
-  cpf        String      @db.VarChar(11) @unique
-  telefone   String      @db.VarChar(15) @unique
-  email      String      @db.VarChar(255) @unique
-  senha      String      
-  role       UserRole    @default(CLIENTE) 
-  enderecos  Endereco[]
-  pedidos    Pedido[]
-  avaliacoes Avaliacao[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-}
-
-
-model Endereco {
-  id            Int          @id @default(autoincrement())
-  cep           String       @db.VarChar(8)
-  logradouro    String       @db.VarChar(255)
-  numero        String       @db.VarChar(10)
-  complemento   String       @db.VarChar(255)
-  bairro        String       @db.VarChar(255)
-  id_cliente    Int?
-  id_empresa    Int?
-  id_funcionario Int?
-  empresa       Empresa?     @relation(fields: [id_empresa], references: [id])
-  cliente       Cliente?     @relation(fields: [id_cliente], references: [id])
-  funcionario   Funcionario? @relation(fields: [id_funcionario], references: [id])
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
 }
 
 enum TipoPagamento {
   PIX
-  DINHEIRO
+  DINHEIRO 
   DEBITO
   CREDITO
 }
 
+
+// --- MODELO PRINCIPAL DE USUÁRIO (NOVO) ---
+model Usuario {
+  id                Int          @id @default(autoincrement())
+  nome              String       @db.VarChar(255)
+  cpf               String       @db.VarChar(14) @unique
+  telefone          String       @db.VarChar(15)
+  email             String       @db.VarChar(255) @unique
+  senha             String
+  role              UserRole
+
+  // Campos específicos para Funcionários (opcionais)
+  id_empresa        Int?
+  id_tipo_empregado Int?
+  empresa           Empresa?     @relation(fields: [id_empresa], references: [id], onDelete: SetNull)
+  tipo_empregado    TipoEmprego? @relation(fields: [id_tipo_empregado], references: [id], onDelete: SetNull)
+  
+  // Relações que podem ser de Cliente ou Funcionário
+  enderecos         Endereco[]
+  
+  // Relações específicas de Cliente
+  pedidos           Pedido[]
+  avaliacoes        Avaliacao[]
+
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model Endereco {
+  id          Int       @id @default(autoincrement())
+  cep         String    @db.VarChar(9)
+  logradouro  String    @db.VarChar(255)
+  numero      String    @db.VarChar(10)
+  complemento String?   @db.VarChar(255)
+  bairro      String    @db.VarChar(255)
+  id_usuario  Int?
+  id_empresa  Int?
+  usuario     Usuario?  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  empresa     Empresa?  @relation(fields: [id_empresa], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Pedido {
-  id           Int           @id @default(autoincrement())
-  id_cliente   Int
-  data_pedido  DateTime      @default(now())
-  valor        Float
-  cliente      Cliente       @relation(fields: [id_cliente], references: [id])
+  id          Int           @id @default(autoincrement())
+  id_usuario  Int          
+  data_pedido DateTime      @default(now())
+  valor       Float
+  usuario     Usuario       @relation(fields: [id_usuario], references: [id], onDelete: Cascade) 
   itens_pedido ItensPedido[]
-  pagamentos   Pagamento[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  pagamentos  Pagamento[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Avaliacao {
+  id             Int      @id @default(autoincrement())
+  id_usuario     Int      // MUDOU de id_cliente
+  id_produto     Int
+  nota           Int
+  comentario     String   @db.VarChar(255)
+  data_avaliacao DateTime @default(now())
+  usuario        Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade) // MUDOU de cliente
+  produto        Produto  @relation(fields: [id_produto], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Modelos restantes (com pequenas atualizações de onDelete)
+model Produto {
+  id              Int           @id @default(autoincrement())
+  nome            String        @db.VarChar(255)
+  preco           Float
+  quantidade      Int
+  descricao       String        @db.VarChar(255)
+  categoria       tiposProd
+  id_supermercado Int
+  supermercado    Empresa       @relation(fields: [id_supermercado], references: [id], onDelete: Cascade)
+  itens_pedido    ItensPedido[]
+  avaliacoes      Avaliacao[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model ItensPedido {
@@ -135,7 +144,7 @@ model ItensPedido {
   id_pedido  Int
   id_produto Int
   quantidade Int
-  pedido     Pedido   @relation(fields: [id_pedido], references: [id])
+  pedido     Pedido   @relation(fields: [id_pedido], references: [id], onDelete: Cascade)
   produto    Produto  @relation(fields: [id_produto], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -146,20 +155,7 @@ model Pagamento {
   id_pedido      Int
   tipo           TipoPagamento
   data_pagamento DateTime      @default(now())
-  pedido         Pedido        @relation(fields: [id_pedido], references: [id])
+  pedido         Pedido        @relation(fields: [id_pedido], references: [id], onDelete: Cascade)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-}
-
-model Avaliacao {
-  id             Int      @id @default(autoincrement())
-  id_cliente     Int
-  id_produto     Int
-  nota           Int  
-  comentario     String   @db.VarChar(255)
-  data_avaliacao DateTime @default(now())
-  cliente        Cliente  @relation(fields: [id_cliente], references: [id])
-  produto        Produto  @relation(fields: [id_produto], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
 }
