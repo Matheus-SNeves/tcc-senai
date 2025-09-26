@@ -1,12 +1,11 @@
 const jsonwebtoken = require("jsonwebtoken");
-const { validatePassword } = require('../middlewares/auth');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { validatePassword } = require('../middlewares/bcrypt');
 
-const login = async (req, res) => {
-    const { email, senha } = req.body;
-
+const login = async (req, res, next) => {
     try {
+        const { email, senha } = req.body;
         const usuario = await prisma.usuario.findUnique({ where: { email } });
 
         if (!usuario || !(await validatePassword(senha, usuario.senha))) {
@@ -18,14 +17,13 @@ const login = async (req, res) => {
             process.env.SECRET_JWT,
             { expiresIn: "60min" }
         );
-        
-        return res.status(200).json({ 
+
+        return res.status(200).json({
             token,
             usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role }
         });
-
     } catch (err) {
-        return res.status(500).json({ message: 'Erro interno do servidor' });
+        next(err);
     }
 };
 
