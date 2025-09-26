@@ -1,7 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 const { validate, isCliente, isAdmin } = require('./middlewares/auth');
-const { validate: validateBody, loginSchema, cadastroSchema } = require('./middlewares/validation');
+const { validate: validateBody, loginSchema, cadastroSchema } = require('./middlewares/validate');
 const errorHandler = require('./middlewares/errorHandler');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
