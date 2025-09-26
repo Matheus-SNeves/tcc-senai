@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const login = require('./controllers/login');
 const cadastro = require('./controllers/cadastro');
 const Pedido = require('./controllers/pedido');
-const Avaliacao = require('./controllers/avaliacao'); 
+const Avaliacao = require('./controllers/avaliacao');
 const genericController = require('./utils/genericController');
 
 const Usuario = genericController(prisma.usuario);
@@ -25,6 +25,8 @@ const createCRUDRoutes = (path, controller, middlewares = []) => {
     routes.put(`${path}/:id`, ...middlewares, controller.update);
     routes.delete(`${path}/:id`, ...middlewares, controller.remove);
 };
+
+routes.get('/', (req, res) => { "API TechMan funcionando normalmente!"})
 
 routes.post('/login', validateBody(loginSchema), login.login);
 routes.post('/cadastro', validateBody(cadastroSchema), cadastro.createUsuario);
