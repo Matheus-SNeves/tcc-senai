@@ -69,7 +69,6 @@ model Usuario {
   tipo_empregado    TipoEmprego? @relation(fields: [id_tipo_empregado], references: [id], onDelete: SetNull)
   
   enderecos         Endereco[]
-  
   pedidos           Pedido[]
   avaliacoes        Avaliacao[]
 
