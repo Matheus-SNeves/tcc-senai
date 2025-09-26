@@ -30,6 +30,9 @@ const cadastroSchema = Joi.object({
         'string.min': 'A senha deve ter no mínimo 6 caracteres.',
         'any.required': 'A senha é obrigatória.',
     }),
+    role: Joi.string().valid('CLIENTE', 'ADMIN').messages({
+        'any.only': 'O papel deve ser CLIENTE ou ADMIN.',
+    }),
 });
 
 const validate = (schema) => (req, res, next) => {
