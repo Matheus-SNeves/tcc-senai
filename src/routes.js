@@ -17,6 +17,7 @@ const Empresa = genericController(prisma.empresa);
 const Produto = genericController(prisma.produto);
 const TipoEmprego = genericController(prisma.tipoEmprego);
 const Endereco = genericController(prisma.endereco);
+const Seed = require('./controllers/seed');
 
 const createCRUDRoutes = (path, controller, middlewares = []) => {
     routes.post(path, ...middlewares, controller.create);
@@ -26,8 +27,11 @@ const createCRUDRoutes = (path, controller, middlewares = []) => {
     routes.delete(`${path}/:id`, ...middlewares, controller.remove);
 };
 
-routes.get('/', (req, res) => { "API TechMan funcionando normalmente!"})
+routes.get('/', (req, res) => {
+    res.json({ titulo: 'API Speed Market funcionando, documentação em /docs' });
+});
 
+routes.post('/seed', Seed.seed);
 routes.post('/login', validateBody(loginSchema), login.login);
 routes.post('/cadastro', validateBody(cadastroSchema), cadastro.createUsuario);
 routes.get('/produtos', Produto.read);

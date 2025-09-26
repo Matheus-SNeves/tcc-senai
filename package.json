@@ -4,8 +4,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "postinstall": "prisma generate",
-    "prisma:seed": "node prisma/seed.js"
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "Matheus Neves",
