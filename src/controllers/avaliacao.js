@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const genericController = require('./genericController');
+const genericController = require('../utils/genericController');
 
 const Avaliacao = {
     create: async (req, res, next) => {

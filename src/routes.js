@@ -10,7 +10,7 @@ const login = require('./controllers/login');
 const cadastro = require('./controllers/cadastro');
 const Pedido = require('./controllers/pedido');
 const Avaliacao = require('./controllers/avaliacao'); 
-const genericController = require('./controllers/genericController');
+const genericController = require('./utils/genericController');
 
 const Usuario = genericController(prisma.usuario);
 const Empresa = genericController(prisma.empresa);
