@@ -1,4 +1,3 @@
-// src/middlewares/validation.js
 const Joi = require('joi');
 
 const loginSchema = Joi.object({

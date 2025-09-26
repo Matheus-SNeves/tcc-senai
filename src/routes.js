@@ -1,13 +1,14 @@
 const express = require('express');
 const routes = express.Router();
-const { validate, isCliente, isAdmin } = require('./middlewares/auth');
+const { validate } = require('./middlewares/auth');
 const { validate: validateBody, loginSchema, cadastroSchema } = require('./middlewares/validate');
 const errorHandler = require('./middlewares/errorHandler');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const login = require('./controllers/login');
-const cadastro = require('./controllers/cadastro');
+const cadastroCliente = require('./controllers/cadastroCliente');
+const cadastroAdm = require('./controllers/cadastroAdm');
 const Pedido = require('./controllers/pedido');
 const Avaliacao = require('./controllers/avaliacao');
 const genericController = require('./utils/genericController');
@@ -17,37 +18,33 @@ const Empresa = genericController(prisma.empresa);
 const Produto = genericController(prisma.produto);
 const TipoEmprego = genericController(prisma.tipoEmprego);
 const Endereco = genericController(prisma.endereco);
-const Seed = require('./controllers/seed');
 
 const createCRUDRoutes = (path, controller, middlewares = []) => {
-    routes.post(path, ...middlewares, controller.create);
-    routes.get(path, ...middlewares, controller.read);
-    routes.get(`${path}/:id`, ...middlewares, controller.readOne);
-    routes.put(`${path}/:id`, ...middlewares, controller.update);
-    routes.delete(`${path}/:id`, ...middlewares, controller.remove);
+    routes.post(path, middlewares, controller.create);
+    routes.get(path, middlewares, controller.read);
+    routes.get(`${path}/:id`, middlewares, controller.readOne);
+    routes.put(`${path}/:id`, middlewares, controller.update);
+    routes.delete(`${path}/:id`, middlewares, controller.remove);
 };
 
 routes.get('/', (req, res) => {
     res.json({ titulo: 'API Speed Market funcionando, documentação em /docs' });
 });
 
-routes.post('/seed', Seed.seed);
 routes.post('/login', validateBody(loginSchema), login.login);
-routes.post('/cadastro', validateBody(cadastroSchema), cadastro.createUsuario);
-routes.get('/produtos', Produto.read);
-routes.get('/produtos/:id', Produto.readOne);
-routes.get('/empresas', Empresa.read);
+routes.post('/cadastro-cliente', validateBody(cadastroSchema), cadastroCliente.createCliente);
+routes.post('/cadastro-adm', validateBody(cadastroSchema), cadastroAdm.createAdmin);
 
-routes.post('/pedidos', validate, isCliente, Pedido.create);
+routes.post('/pedidos', validate, Pedido.create);
 routes.get('/pedidos', validate, Pedido.read);
 routes.get('/pedidos/:id', validate, Pedido.readOne);
-routes.post('/avaliacoes', validate, isCliente, Avaliacao.create);
-createCRUDRoutes('/enderecos', Endereco, [validate]);
+routes.post('/avaliacoes', validate, Avaliacao.create);
 
-createCRUDRoutes('/usuarios', Usuario, [validate, isAdmin]);
-createCRUDRoutes('/admin/empresas', Empresa, [validate, isAdmin]);
-createCRUDRoutes('/admin/produtos', Produto, [validate, isAdmin]);
-createCRUDRoutes('/admin/tipoempregos', TipoEmprego, [validate, isAdmin]);
+createCRUDRoutes('/enderecos', Endereco, validate);
+createCRUDRoutes('/usuarios', Usuario, validate);
+createCRUDRoutes('/empresas', Empresa, validate);
+createCRUDRoutes('/produtos', Produto, validate);
+createCRUDRoutes('/tipoempregos', TipoEmprego, validate);
 
 routes.use(errorHandler);
 

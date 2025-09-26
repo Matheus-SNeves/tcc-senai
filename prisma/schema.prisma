@@ -7,14 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelos que não mudam
 model Empresa {
   id        Int        @id @default(autoincrement())
   nome      String     @db.VarChar(255)
   cnpj      String     @unique @db.VarChar(18)
   email     String     @db.VarChar(255) @unique
   produtos  Produto[]
-  usuarios  Usuario[] // MUDOU DE 'empregados' para 'usuarios'
+  usuarios  Usuario[] 
   enderecos Endereco[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -26,12 +25,11 @@ model TipoEmprego {
   salario       Float
   carga_horaria Int
   descricao     String    @db.VarChar(255)
-  usuarios      Usuario[] // MUDOU DE 'empregados' para 'usuarios'
+  usuarios      Usuario[] 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
 
-// Enums (sem alteração)
 enum UserRole {
   CLIENTE
   ADMIN
@@ -56,7 +54,6 @@ enum TipoPagamento {
 }
 
 
-// --- MODELO PRINCIPAL DE USUÁRIO (NOVO) ---
 model Usuario {
   id                Int          @id @default(autoincrement())
   nome              String       @db.VarChar(255)
@@ -66,16 +63,13 @@ model Usuario {
   senha             String
   role              UserRole
 
-  // Campos específicos para Funcionários (opcionais)
   id_empresa        Int?
   id_tipo_empregado Int?
   empresa           Empresa?     @relation(fields: [id_empresa], references: [id], onDelete: SetNull)
   tipo_empregado    TipoEmprego? @relation(fields: [id_tipo_empregado], references: [id], onDelete: SetNull)
   
-  // Relações que podem ser de Cliente ou Funcionário
   enderecos         Endereco[]
   
-  // Relações específicas de Cliente
   pedidos           Pedido[]
   avaliacoes        Avaliacao[]
 
@@ -112,7 +106,7 @@ model Pedido {
 
 model Avaliacao {
   id             Int      @id @default(autoincrement())
-  id_usuario     Int      // MUDOU de id_cliente
+  id_usuario     Int     
   id_produto     Int
   nota           Int
   comentario     String   @db.VarChar(255)
@@ -123,7 +117,6 @@ model Avaliacao {
   updatedAt      DateTime @updatedAt
 }
 
-// Modelos restantes (com pequenas atualizações de onDelete)
 model Produto {
   id              Int           @id @default(autoincrement())
   nome            String        @db.VarChar(255)

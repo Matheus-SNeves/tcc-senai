@@ -1,4 +1,3 @@
-// src/utils/bcrypt.js
 const bcrypt = require('bcrypt');
 
 const createHash = async (senha) => {

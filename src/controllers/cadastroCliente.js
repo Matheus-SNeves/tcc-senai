@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { createHash } = require('../middlewares/bcrypt');
 
-const createUsuario = async (req, res, next) => {
+const createCliente = async (req, res, next) => {
     try {
         const { nome, cpf, telefone, email, senha } = req.body;
         const hashedPassword = await createHash(senha);
@@ -26,5 +26,5 @@ const createUsuario = async (req, res, next) => {
 };
 
 module.exports = {
-    createUsuario,
+    createCliente,
 };

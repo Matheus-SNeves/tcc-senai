@@ -1,4 +1,3 @@
-// src/middlewares/auth.js
 const jsonwebtoken = require("jsonwebtoken");
 
 const validate = (req, res, next) => {
@@ -16,26 +15,6 @@ const validate = (req, res, next) => {
     }
 };
 
-const isAdmin = (req, res, next) => {
-    const user = req.user;
-    if (user && user.role === 'ADMIN') {
-        next();
-    } else {
-        res.status(403).json({ message: "Acesso negado. Apenas administradores podem acessar esta rota." });
-    }
-};
-
-const isCliente = (req, res, next) => {
-    const user = req.user;
-    if (user && user.role === 'CLIENTE') {
-        next();
-    } else {
-        res.status(403).json({ message: "Acesso negado. Apenas clientes podem acessar esta rota." });
-    }
-};
-
 module.exports = {
-    validate,
-    isAdmin,
-    isCliente,
+    validate
 };
