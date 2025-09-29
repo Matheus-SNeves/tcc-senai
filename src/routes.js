@@ -40,10 +40,7 @@ routes.post('/cadastro-adm', validateBody(cadastroSchema), cadastroAdm.createAdm
 routes.post('/pedidos', validate, Pedido.create);
 routes.get('/pedidos', validate, Pedido.read);
 routes.get('/pedidos/:id', validate, Pedido.readOne);
-routes.delete('/pedidos/:id', validate, Pedido.remove);
 routes.post('/avaliacoes', validate, Avaliacao.create);
-routes.get('/avaliacoes', validate, Avaliacao.read);
-routes.delete('/avaliacoes', validate, Avaliacao.remove);
 
 createCRUDRoutes('/enderecos', Endereco, validate);
 createCRUDRoutes('/usuarios', Usuario, validate);
