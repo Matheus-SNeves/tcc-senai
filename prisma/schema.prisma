@@ -12,7 +12,7 @@ model Empresa {
   nome      String     @db.VarChar(255)
   cnpj      String     @unique @db.VarChar(18)
   email     String     @unique @db.VarChar(255)
-  imagem    String?
+  img       String?
   produtos  Produto[]
   usuarios  Usuario[]
   enderecos Endereco[]
@@ -124,7 +124,7 @@ model Produto {
   descricao       String        @db.VarChar(255)
   categoria       tiposProd
   id_supermercado Int
-  imagem          String?
+  img             String?
   supermercado    Empresa       @relation(fields: [id_supermercado], references: [id], onDelete: Cascade)
   itens_pedido    ItensPedido[]
   avaliacoes      Avaliacao[]

@@ -4,7 +4,7 @@ const { createHash } = require('../middlewares/bcrypt');
 
 const createAdmin = async (req, res, next) => {
     try {
-        const { nome, cpf, telefone, email, senha } = req.body;
+        const { nome, cpf, telefone, email, senha, id_empresa, id_tipo_empregado } = req.body; 
         const hashedPassword = await createHash(senha);
 
         const novoUsuario = await prisma.usuario.create({
@@ -15,6 +15,8 @@ const createAdmin = async (req, res, next) => {
                 email,
                 senha: hashedPassword,
                 role: 'ADMIN',
+                id_empresa,
+                id_tipo_empregado
             },
         });
 

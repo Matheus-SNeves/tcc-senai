@@ -33,6 +33,12 @@ const cadastroSchema = Joi.object({
     role: Joi.string().valid('CLIENTE', 'ADMIN').messages({
         'any.only': 'O papel deve ser CLIENTE ou ADMIN.',
     }),
+    id_empresa: Joi.number().integer().messages({
+        'number.base': 'O id_empresa deve ser um número inteiro.',
+    }),
+    id_tipo_empregado: Joi.number().integer().messages({
+        'number.base': 'O id_tipo_empregado deve ser um número inteiro.',
+    }),
 });
 
 const validate = (schema) => (req, res, next) => {

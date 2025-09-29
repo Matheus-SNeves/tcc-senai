@@ -1,7 +1,25 @@
+const transformForeignKeyIds = (data) => {
+    const newData = {};
+    for (const key in data) {
+        if (key.startsWith('id_') && typeof data[key] === 'number') {
+            const relationName = key.substring(3);
+            newData[relationName] = {
+                connect: {
+                    id: data[key],
+                },
+            };
+        } else {
+            newData[key] = data[key];
+        }
+    }
+    return newData;
+};
+
 const genericController = (prismaModel) => ({
     create: async (req, res, next) => {
         try {
-            const record = await prismaModel.create({ data: req.body });
+            const data = transformForeignKeyIds(req.body);
+            const record = await prismaModel.create({ data });
             res.status(201).json(record);
         } catch (error) {
             next(error);
@@ -31,9 +49,10 @@ const genericController = (prismaModel) => ({
 
     update: async (req, res, next) => {
         try {
+            const data = transformForeignKeyIds(req.body);
             const record = await prismaModel.update({
                 where: { id: Number(req.params.id) },
-                data: req.body,
+                data, 
             });
             res.status(202).json(record);
         } catch (error) {
