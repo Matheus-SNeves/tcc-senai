@@ -15,7 +15,7 @@ const login = async (req, res, next) => {
         const token = jsonwebtoken.sign(
             { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role },
             process.env.SECRET_JWT,
-            { expiresIn: "60min" }
+            { expiresIn: "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999min" }
         );
 
         return res.status(200).json({

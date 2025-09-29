@@ -18,6 +18,8 @@ const Empresa = genericController(prisma.empresa);
 const Produto = genericController(prisma.produto);
 const TipoEmprego = genericController(prisma.tipoEmprego);
 const Endereco = genericController(prisma.endereco);
+const ItensPedido = genericController(prisma.itensPedido);
+const Pagamento = genericController(prisma.pagamento);
 
 const createCRUDRoutes = (path, controller, middlewares = []) => {
     routes.post(path, middlewares, controller.create);
@@ -45,6 +47,8 @@ createCRUDRoutes('/usuarios', Usuario, validate);
 createCRUDRoutes('/empresas', Empresa, validate);
 createCRUDRoutes('/produtos', Produto, validate);
 createCRUDRoutes('/tipoempregos', TipoEmprego, validate);
+createCRUDRoutes('/itenspedidos', ItensPedido, validate);
+createCRUDRoutes('/pagamentos', Pagamento, validate);
 
 routes.use(errorHandler);
 
