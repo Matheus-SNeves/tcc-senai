@@ -9,14 +9,14 @@ const pedidoController = {
         try {
             const userId = req.user.id; 
             const pedidos = await prisma.pedido.findMany({
-                where: { id_usuario: userId },
-                include: {
-                    itens_pedido: {
-                        include: {
-                            produto: true 
-                        }
-                    }
-                }
+                where: { id_usuario: userId }
+                // include: {
+                //     itens_pedido: {
+                //         include: {
+                //             produto: true 
+                //         }
+                //     }
+                // }
             });
             return res.status(200).json(pedidos);
         } catch (error) {
