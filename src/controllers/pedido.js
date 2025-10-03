@@ -5,24 +5,7 @@ const genericController = require('../utils/genericController');
 const pedidoController = {
     create: genericController(prisma.pedido).create,
 
-    read: async (req, res) => {
-        try {
-            const userId = req.user.id; 
-            const pedidos = await prisma.pedido.findMany({
-                // where: { id_usuario: userId }
-                // include: {
-                //     itens_pedido: {
-                //         include: {
-                //             produto: true 
-                //         }
-                //     }
-                // }
-            });
-            return res.status(200).json(pedidos);
-        } catch (error) {
-            return res.status(500).json({ error: error.message });
-        }
-    },
+    read: genericController(prisma.pedido).read,
 
     readOne: async (req, res) => {
         try {
