@@ -7,16 +7,21 @@ const pedidoController = {
 
     read: async (req, res) => {
         try {
-            const userId = req.user.id; 
+            const userRole = req.user.role;
+            const userId = req.user.id;
+
+            const whereClause = userRole === 'CLIENTE' ? { id_usuario: userId } : {};
+
             const pedidos = await prisma.pedido.findMany({
-                where: { id_usuario: userId },
+                where: whereClause,
                 include: {
+                    pagamento: true,
+                    usuario: { select: { nome: true, email: true } },
                     itens_pedido: {
-                        include: {
-                            produto: true 
-                        }
+                        include: { produto: true }
                     }
-                }
+                },
+                orderBy: { createdAt: 'desc' }
             });
             return res.status(200).json(pedidos);
         } catch (error) {
