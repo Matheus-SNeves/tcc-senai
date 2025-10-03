@@ -41,6 +41,7 @@ routes.post('/pedidos', validate, Pedido.create);
 routes.get('/pedidos', validate, Pedido.read);
 routes.get('/pedidos/:id', validate, Pedido.readOne);
 routes.post('/avaliacoes', validate, Avaliacao.create);
+routes.get('/avaliacoes', validate, Avaliacao.read);
 
 createCRUDRoutes('/enderecos', Endereco, validate);
 createCRUDRoutes('/usuarios', Usuario, validate);
