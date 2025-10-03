@@ -15,7 +15,7 @@ const pedidoController = {
             const pedidos = await prisma.pedido.findMany({
                 where: whereClause,
                 include: {
-                    pagamento: true,
+                    // pagamento: true,
                     usuario: { select: { nome: true, email: true } },
                     itens_pedido: {
                         include: { produto: true }
