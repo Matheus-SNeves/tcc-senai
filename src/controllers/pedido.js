@@ -1,6 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient();
-// const genericController = require('../utils/genericController'); // Mantemos para as outras operações
+
+const genericController = require('../utils/genericController');
+
+
 
 const pedidoController = {
     // A função CREATE precisa ser personalizada para lidar com Pedido, ItensPedido e Pagamento
@@ -74,19 +78,63 @@ const pedidoController = {
             });
         }
     },
-    
-    // update: genericController(prisma.pedido).update,
-    // remove: genericController(prisma.pedido).remove,
-    // read: genericController(prisma.pedido).read, 
-    // ... (Mantenha o restante do controller inalterado)
 
-    readAllByUser: async (req, res) => {
-        // ... (código existente)
-    },
+
 
     readOne: async (req, res) => {
-        // ... (código existente)
+
+        try {
+
+            const userId = req.user.id;
+
+            const pedidoId = Number(req.params.id);
+
+
+
+            const pedido = await prisma.pedido.findUnique({
+
+                where: { id: pedidoId, id_usuario: userId },
+
+                include: {
+
+                    itens_pedido: {
+
+                        include: {
+
+                            produto: true
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+
+
+            if (!pedido) {
+
+                return res.status(404).json({ error: 'Pedido não encontrado ou você não tem acesso a ele.' });
+
+            }
+
+           
+
+            return res.status(200).json(pedido);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(500).json({ error: 'Erro ao buscar o pedido.', details: error.message });
+
+        }
+
     },
+
 };
+
+
 
 module.exports = pedidoController;
